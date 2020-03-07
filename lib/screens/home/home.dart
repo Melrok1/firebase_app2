@@ -2,9 +2,7 @@ import 'package:firebase_app_2/screens/home/userList.dart';
 import 'package:firebase_app_2/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_app_2/models/user.dart';
 import 'package:firebase_app_2/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_2/models/user2.dart';
 
 class Home extends StatelessWidget {
@@ -14,6 +12,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    //bool isCreated = false;
 
     // ?First bottom sheet START /////////////////////////////////////////
 

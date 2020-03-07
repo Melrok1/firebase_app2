@@ -2,18 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_2/models/user2.dart';
 
 class DatabaseService {
-
   final String uid;
   DatabaseService({ this.uid });
 
+
   // Colections reference
   final CollectionReference usersCllection = Firestore.instance.collection('users');
-
+/*
+  Future checkData() async{
+    bool check = await DatabaseService().checkData();
+    return check;
+  }
+*/
   Future updateUserData(String sugars, String name, int strength) async {
     return await usersCllection.document(uid).setData({
       'sugars': sugars,
       'name': name,
       'strength': strength
+    });
+  }
+
+  Future updateUserDataGoogle(String sugars, String name, int strength) async{
+    print('TOTO HLADAS ${await DatabaseService(uid: uid).usersCllection.document(uid).documentID.isEmpty}');
+    return await usersCllection.document(uid).setData({
+      'sugars': sugars,
+      'name': name,
+      'strength': strength,
     });
   }
 

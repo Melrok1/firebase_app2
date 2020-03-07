@@ -3,8 +3,8 @@ import 'package:firebase_app_2/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app_2/shared/constances.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_app_2/models/user.dart';
+import 'package:provider/provider.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -19,32 +19,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   final AuthService _auth = AuthService();
-  final FirebaseAuth _authG = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-
-   // Creating method for sign in and sign out
-  Future<FirebaseUser> _signInWithGoogle() async{
-    GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();          // ?Prihlási sa do google accoutnt
-    GoogleSignInAuthentication gSA = await googleSignInAccount.authentication;      // ?Overenie accountu po prihláseni
-    
-    final AuthCredential credential = GoogleAuthProvider.getCredential(              // ? vytvorenie credital pre AuthResult získa idToken a accessToken
-      accessToken: gSA.accessToken,
-      idToken: gSA.idToken,
-    );
-
-    final AuthResult authResult = await _authG.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
-
-    print('user Name: ${user.displayName}');
-    return user;
-  }
-
-  void signOutGoogle() async{
-  await googleSignIn.signOut();
-
-  print("User Sign Out");
-}
 
   bool loading = false;
 
@@ -147,7 +122,12 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           onPressed: () {
-                            _signInWithGoogle();
+                            dynamic result = _auth.signInWithGoogle();
+                            setState(() => loading = true);
+                            if(result == null) {
+                              error = 'Error in google login';
+                              loading = false;
+                            }
                           },
                         ),
 

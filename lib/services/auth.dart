@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   // !crease user object base on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -19,6 +19,33 @@ class AuthService {
     //.map((FirebaseUser user) => _userFromFirebaseUser(user)); 
     .map(_userFromFirebaseUser);
   }
+
+  // !sign in with google
+    Future<FirebaseUser> signInWithGoogle() async{
+    GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();          // ?Prihlási sa do google accoutnt
+    GoogleSignInAuthentication gSA = await googleSignInAccount.authentication;      // ?Overenie accountu po prihláseni
+    
+    final AuthCredential credential = GoogleAuthProvider.getCredential(              // ? vytvorenie credital pre AuthResult získa idToken a accessToken
+      accessToken: gSA.accessToken,
+      idToken: gSA.idToken,
+    );
+
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
+  
+    await DatabaseService(uid: user.uid).updateUserDataGoogle('0', '${user.displayName}', 100);  //? Vytvorenie objektu v databaze
+
+    print('user Name: ${user.displayName}');
+    return user;
+  }
+
+  // ? Log out google
+  void signOutGoogle() async{
+  await googleSignIn.signOut();
+
+  print("User Sign Out");
+}
+
 
   // !sign in anon
   Future signInAnon() async {
